@@ -47,7 +47,7 @@ alertConditions = [
 ]
 
 def initAlertConditions(cond:dict)->pd.DataFrame:
-    print(f"當前函數名稱是：{inspect.currentframe().f_code.co_name}")
+    # print(f"當前函數名稱是：{inspect.currentframe().f_code.co_name}")
     df = pd.DataFrame(alertConditions)
     if df.empty == True:
         return (False, df)
@@ -80,7 +80,7 @@ def getCurSysDateTime():
     curTime = now.strftime("%H:%M:%S")  # 格式化時間為 HH:MM:SS
     # 取得星期幾 (# 1 是星期一，7 是星期日)
     weekdayNumISO = now.isoweekday()
-    print(f"自己取得日期時間星期幾: {curDate, curTime, weekdayNumISO}")
+    # print(f"自己取得日期時間星期幾: {curDate, curTime, weekdayNumISO}")
     return (curDate, curTime, weekdayNumISO)
 
 def isTradeDatetime(stock:dict)->bool:
@@ -88,7 +88,7 @@ def isTradeDatetime(stock:dict)->bool:
     sysDate = stock['queryTime']['sysDate']
     sysTime = stock['queryTime']['sysTime']
     tradeDate = stock['msgArray'][0]['d']
-    print(f"從 twse 取得的系統日期時間 [{sysDate} {sysTime}]")
+    # print(f"從 twse 取得的系統日期時間 [{sysDate} {sysTime}]")
     date, time, week = getCurSysDateTime()
     if sysDate == tradeDate and sysTime >= "09:00:00" and sysTime <= "13:30:00"\
         and week >= 1 and week <=5:
