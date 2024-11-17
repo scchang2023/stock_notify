@@ -97,7 +97,7 @@ def isTradeDatetime(stock:dict)->bool:
         return False
 
 def checkStockAlert(cond:pd.DataFrame, stock:pd.DataFrame):
-    print(f"當前函數名稱是：{inspect.currentframe().f_code.co_name}")
+    # print(f"當前函數名稱是：{inspect.currentframe().f_code.co_name}")
     stock = stock[["c","y","z"]].copy()
     for i in range(cond.shape[0]):
         z = stock.iloc[i]['z']
