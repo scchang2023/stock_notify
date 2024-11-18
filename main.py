@@ -25,29 +25,29 @@ from datetime import datetime
 # nf	公司全名
 alertConditions = [
     {'ex_ch':'tse_t00.tw',
-    'thMin':[[-5, False], [-3, False], [-1, False]], 'thMax':[[5, False], [3, False], [1, False]]},
+    'thMin':[[-3, False], [-2, False], [-1, False]], 'thMax':[[3, False], [2, False], [1, False]]},
     {'ex_ch':'tse_00878.tw',
-    'thMin':[[-5, False], [-3, False], [-1, False]], 'thMax':[[5, False], [3, False], [1, False]]},
+    'thMin':[[-3, False], [-2, False], [-1, False]], 'thMax':[[3, False], [2, False], [1, False]]},
     {'ex_ch':'tse_00881.tw',
-    'thMin':[[-5, False], [-3, False], [-1, False]], 'thMax':[[5, False], [3, False], [1, False]]},
+    'thMin':[[-3, False], [-2, False], [-1, False]], 'thMax':[[3, False], [2, False], [1, False]]},
     {'ex_ch':'tse_00919.tw',
-    'thMin':[[-5, False], [-3, False], [-1, False]], 'thMax':[[5, False], [3, False], [1, False]]},
+    'thMin':[[-3, False], [-2, False], [-1, False]], 'thMax':[[3, False], [2, False], [1, False]]},
     {'ex_ch':'tse_00940.tw',
-    'thMin':[[-5, False], [-3, False], [-1, False]], 'thMax':[[5, False], [3, False], [1, False]]},
+    'thMin':[[-3, False], [-2, False], [-1, False]], 'thMax':[[3, False], [2, False], [1, False]]},
     {'ex_ch':'tse_0056.tw',
-    'thMin':[[-5, False], [-3, False], [-1, False]], 'thMax':[[5, False], [3, False], [1, False]]},
+    'thMin':[[-3, False], [-2, False], [-1, False]], 'thMax':[[3, False], [2, False], [1, False]]},
     {'ex_ch':'tse_2002.tw',
-    'thMin':[[-5, False], [-3, False], [-1, False]], 'thMax':[[5, False], [3, False], [1, False]]},
+    'thMin':[[-3, False], [-2, False], [-1, False]], 'thMax':[[3, False], [2, False], [1, False]]},
     {'ex_ch':'tse_2330.tw',
-    'thMin':[[-5, False], [-3, False], [-1, False]], 'thMax':[[5, False], [3, False], [1, False]]},
+    'thMin':[[-3, False], [-2, False], [-1, False]], 'thMax':[[3, False], [2, False], [1, False]]},
     {'ex_ch':'tse_2884.tw',
-    'thMin':[[-5, False], [-3, False], [-1, False]], 'thMax':[[5, False], [3, False], [1, False]]},
+    'thMin':[[-3, False], [-2, False], [-1, False]], 'thMax':[[3, False], [2, False], [1, False]]},
     {'ex_ch':'tse_2891.tw',
-    'thMin':[[-5, False], [-3, False], [-1, False]], 'thMax':[[5, False], [3, False], [1, False]]}
+    'thMin':[[-3, False], [-2, False], [-1, False]], 'thMax':[[3, False], [2, False], [1, False]]}
 ]
 
 def initAlertConditions(cond:dict)->pd.DataFrame:
-    # print(f"當前函數名稱是：{inspect.currentframe().f_code.co_name}")
+    print(f"當前函數名稱是：{inspect.currentframe().f_code.co_name}")
     df = pd.DataFrame(alertConditions)
     if df.empty == True:
         return (False, df)
@@ -99,6 +99,8 @@ def isTradeDatetime(stock:dict)->bool:
 def checkStockAlert(cond:pd.DataFrame, stock:pd.DataFrame):
     # print(f"當前函數名稱是：{inspect.currentframe().f_code.co_name}")
     stock = stock[["c","y","z"]].copy()
+    # 將目前盤中交易價格z欄位中為'-'字元時，以昨收價格取代
+    stock['z'] = stock.apply(lambda row: row['y'] if row['z'] == '-' else row['z'], axis=1)
     for i in range(cond.shape[0]):
         z = stock.iloc[i]['z']
         y = stock.iloc[i]['y']
@@ -146,6 +148,7 @@ def sendLineNotify(msg:str)->requests.Response:
 def sendStockMsg2LineNotify(df:pd.DataFrame):
     print(f"當前函數名稱是：{inspect.currentframe().f_code.co_name}")
     df.loc[:, 'z'] = df['z'].astype(float)
+    # print(df)
     # 只保留 toAlert 為 True 的列
     df = df[df['toAlert'] == True]
     # 將有小數的元素，保留至小數點以下2位
@@ -161,7 +164,6 @@ def sendStockMsg2LineNotify(df:pd.DataFrame):
     if df.empty == False:
         print(msg)
         sendLineNotify("\n"+msg)
-    return 
 
 def sendCondMsg2LineNotify(df:pd.DataFrame):
     print(f"當前函數名稱是：{inspect.currentframe().f_code.co_name}")
