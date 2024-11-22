@@ -87,7 +87,11 @@ def isTradeDatetime(stock:dict)->bool:
     # print(f"當前函數名稱是：{inspect.currentframe().f_code.co_name}")
     sysDate = stock['queryTime']['sysDate']
     sysTime = stock['queryTime']['sysTime']
-    tradeDate = stock['msgArray'][0]['d']
+    if 'd' in stock['msgArray'][0]:
+        tradeDate = stock['msgArray'][0]['d']
+        print("missing 'd' key:", stock)
+    else:
+        return False
     # print(f"從 twse 取得的系統日期時間 [{sysDate} {sysTime}]")
     date, time, week = getCurSysDateTime()
     if sysDate == tradeDate and sysTime >= "09:00:00" and sysTime <= "13:30:00"\
